@@ -1,0 +1,161 @@
+﻿@model UserProfile.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Create a new account.</h4>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group completion">
+        @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group completion">
+        @Html.LabelFor(m => m.Address, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextAreaFor(m => m.Address, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group completion">
+        @Html.LabelFor(m => m.MobileNumber, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.MobileNumber, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group completion">
+        @Html.LabelFor(m => m.EmailNotification, new { @class = "col-md-2 control-label" })
+        <div class="col-md-1">
+            @Html.CheckBoxFor(m => m.EmailNotification, new { @class = "form-control" })
+        </div>
+    </div>
+
+    <div class="form-group" id="divSubmit">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="button" class="btn btn-default" value="Submit" id="btnSubmit" />
+        </div>
+    </div>
+
+    <div class="form-group" id="divregister">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" id="btnregister" value="Register" />
+        </div>
+    </div>
+
+    <div id="myModal" class="modal" style="display:none">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="message">Verification Email has been sent to your email, Please click the link to verify..</p>
+        </div>
+
+    </div>
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function () {
+            $('#divregister').hide();
+            $('.completion').hide();
+
+            $('#basicExampleModal').click(function () {
+                $('#basicExampleModal').hide();
+            });
+            $('#btnSubmit').click(function () {
+                debugger;
+                var serviceURL = "/Home/SubmitUser";
+                var model = {};
+                model.Email = $('#Email').val();
+                model.Password = $('#Password').val();
+                model.ConfirmPassword = $('#ConfirmPassword').val();
+                if (model.Email && (model.Password !== model.ConfirmPassword) && !IsValidEmail(model.Email)) {
+                    $('#myModal').show();
+                    $('#message').text('Invalid credentials Please enter valid');
+                    return;
+                }
+                else {
+                    $.ajax({
+                        type: "POST",
+                        url: serviceURL,
+                        data: '{model: ' + JSON.stringify(model) + '}',
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (msg) {
+                            $('.completion').show();
+                            $('#divregister').show();
+                            $('#divSubmit').hide();
+                            $('#basicExampleModal').show();
+                            $('.validation-summary-errors').hide();
+                            $('#myModal').show();
+                            console.log("ajax sccess event fired     " + msg);
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log('Error in Operation');
+                        }
+                    });
+                }
+            });
+
+            $('.close').click(function () {
+                $('#myModal').hide();
+            });
+
+            function IsValidEmail(email) {
+        //Check minimum valid length of an Email.
+        if (email.length <= 2) {
+            return false;
+        }
+        //If whether email has @ character.
+        if (email.indexOf("@") == -1) {
+            return false;
+        }
+
+        var parts = email.split("@");
+        var dot = parts[1].indexOf(".");
+        var len = parts[1].length;
+        var dotSplits = parts[1].split(".");
+        var dotCount = dotSplits.length - 1;
+        if (dot == -1 || dot < 2 || dotCount > 2) {
+            return false;
+        }
+
+        //Check whether Dot is not the last character and dots are not repeated.
+        for (var i = 0; i < dotSplits.length; i++) {
+            if (dotSplits[i].length == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+        });
+    </script>
+}
