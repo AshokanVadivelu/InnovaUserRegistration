@@ -119,7 +119,7 @@ namespace UserService.Controllers
                 return BadRequest(ModelState);
             }
             var user = (RegisterBindingModel)CacheHelper.Instance.GetValue(model.Email);
-            if (user.Code == model.Code)
+            if (user.Code != model.Code)
             {
                 return BadRequest("Inalid verification code");
             }
