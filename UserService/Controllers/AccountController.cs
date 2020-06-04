@@ -68,7 +68,8 @@ namespace UserService.Controllers
         {
             user.Code = this.GetCode();
             CacheHelper.Instance.Add(user.Email, user, DateTimeOffset.UtcNow.AddMinutes(60));
-            await this.SendEmail(user.Email, user.Code);
+            //Commented for time being since it does not have proper user credentials
+            //await this.SendEmail(user.Email, user.Code);  
             return Ok("Email Triggered to User email address");
         }
 
