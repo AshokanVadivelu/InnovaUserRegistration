@@ -73,11 +73,10 @@ namespace UserProfile.Models
     public class RegisterViewModel
     {
         [Required]        
-        [Display(Name = "Name")]
+        [Display(Name = "Email")]
         public string Email { get; set; }
 
         [Required]
-        [EmailAddress]
         [Display(Name = "Name")]
         public string Name { get; set; }
 
