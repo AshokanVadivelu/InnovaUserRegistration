@@ -48,7 +48,7 @@ namespace UserProfile.Handler
                     client.BaseAddress = new Uri(baseUri);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    var res = await client.PostAsJsonAsync("/api/Values", model);
+                    var res = await client.PostAsJsonAsync(name, model);
                     //if (res.IsSuccessStatusCode)
                     //{
                     //    response = res.Content.ReadAsAsync<TResponse>().Result;
